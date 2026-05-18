@@ -1,0 +1,95 @@
+groups:
+  - name: url_shortener_alerts
+    interval: 30s
+    rules:
+      # High error rate alert
+      - alert: HighErrorRate
+        expr: |
+          sum(rate(url_shortener_http_requests_total{status=~"5.."}[5m])) 
+          / 
+          sum(rate(url_shortener_http_requests_total[5m])) > 0.01
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "High error rate detected"
+          description: "Error rate is {{ $value | humanizePercentage }} which is above 1% threshold"
+
+      # High latency alert
+      - alert: HighLatency
+        expr: |
+          histogram_quantile(0.95, sum(rate(url_shortener_request_latency_seconds_bucket[5m])) by (le)) > 0.5
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High request latency"
+          description: "95th percentile latency is {{ $value | humanizeDuration }}"
+
+      # Pod crash loop
+      - alert: PodCrashLooping
+        expr: |
+          rate(kube_pod_container_status_restarts_total{namespace="url-shortener"}[15m]) > 0.1
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Pod is crash looping"
+          description: "Pod {{ $labels.pod }} has restarted {{ $value }} times in the last 15 minutes"
+
+      # Redis connection failure
+      - alert: RedisConnectionFailure
+        expr: |
+          redis_up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Redis is down"
+          description: "Redis instance is not responding"
+
+      # High memory usage
+      - alert: HighMemoryUsage
+        expr: |
+          container_memory_usage_bytes{namespace="url-shortener"} 
+          / 
+          container_spec_memory_limit_bytes{namespace="url-shortener"} > 0.9
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High memory usage"
+          description: "Container {{ $labels.container }} is using {{ $value | humanizePercentage }} of its memory limit"
+
+      # High CPU usage
+      - alert: HighCPUUsage
+        expr: |
+          rate(container_cpu_usage_seconds_total{namespace="url-shortener"}[5m]) > 0.8
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High CPU usage"
+          description: "Container {{ $labels.container }} CPU usage is {{ $value | humanizePercentage }}"
+
+      # Low pod count
+      - alert: LowPodCount
+        expr: |
+          kube_deployment_status_replicas_available{namespace="url-shortener"} < 2
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Low pod count"
+          description: "Deployment {{ $labels.deployment }} has only {{ $value }} pods running"
+
+      # URL shortener down
+      - alert: URLShortenerDown
+        expr: |
+          up{job="url-shortener-api"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "URL Shortener API is down"
+          description: "URL Shortener API has been down for more than 1 minute"
