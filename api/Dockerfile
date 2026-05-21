@@ -1,7 +1,7 @@
 # ===========================================
 # Stage 1: Build stage
 # ===========================================
-FROM rust:1.83-alpine AS builder
+FROM rust:1.85-alpine AS builder
 
 # Install build dependencies
 RUN apk add --no-cache musl-dev
@@ -58,7 +58,7 @@ ENV RUST_LOG=info
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD wget --no-verbose --tries=1 --spider http://localhost:8080/health || exit 1
+    CMD wget --no-verbose --tries=1 --spider http://127.0.0.1:8080/health || exit 1
 
 # Run the binary
 ENTRYPOINT ["/app/url-shortener"]

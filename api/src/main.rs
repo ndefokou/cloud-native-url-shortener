@@ -1,6 +1,5 @@
 use axum::{
     extract::{Path, State},
-    http::StatusCode,
     response::{IntoResponse, Json, Redirect},
     routing::{get, post},
     Router,
@@ -100,18 +99,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .route("/:code/stats", get(get_stats))
         .route("/metrics", get(get_metrics))
         .with_state(state)
-        .layer(tower_http::cors::CorsLayer::permissive())
-        .layer(tower_http::request_id::SetRequestIdLayer::new(
-            axum::http::header::X_REQUEST_ID.into(),
-            axum::extract::request_id::UuidRequestId,
-        ));
+        .layer(tower_http::cors::CorsLayer::permissive());
 
     // Start server
     let addr = format!("{}:{}", config.host, config.port);
     tracing::info!("Server listening on {}", addr);
 
-    let listener = tokio::net::TcpListener::bind(&addr).await?;
-    axum::serve(listener, app).await?;
+    axum::Server::bind(&addr.parse()?)
+        .serve(app.into_make_service())
+        .await?;
 
     Ok(())
 }
@@ -158,18 +154,18 @@ async fn shorten_url(
 
     // Store URL mapping
     let url_key = format!("url:{}", short_code);
-    conn.hset(&url_key, "original_url", &payload.url)?;
-    conn.hset(&url_key, "created_at", &created_at)?;
-    conn.hset(&url_key, "short_code", &short_code)?;
+    let _: () = conn.hset(&url_key, "original_url", &payload.url)?;
+    let _: () = conn.hset(&url_key, "created_at", &created_at)?;
+    let _: () = conn.hset(&url_key, "short_code", &short_code)?;
 
     // Initialize click counter
     let clicks_key = format!("clicks:{}", short_code);
-    conn.set(&clicks_key, 0)?;
+    let _: () = conn.set(&clicks_key, 0)?;
 
     // Set expiration if configured
     if let Some(ttl) = state.config.url_ttl {
-        let _ = conn.expire(&url_key, ttl);
-        let _ = conn.expire(&clicks_key, ttl);
+        let _: () = conn.expire(&url_key, ttl as usize)?;
+        let _: () = conn.expire(&clicks_key, ttl as usize)?;
     }
 
     tracing::info!("Created short URL: {} -> {}", short_code, payload.url);

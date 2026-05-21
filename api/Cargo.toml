@@ -8,23 +8,23 @@ license = "MIT"
 
 [dependencies]
 # Web framework
-axum = "0.7"
-tokio = { version = "1", features = ["full"] }
+axum = "0.6"
+tokio = { version = "1.35", features = ["full"] }
 tower = "0.4"
-tower-http = { version = "0.5", features = ["cors", "trace", "request-id"] }
+tower-http = { version = "0.4", features = ["cors", "trace", "request-id"] }
 
 # Serialization
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 
 # Redis
-redis = { version = "0.25", features = ["tokio-comp", "connection-manager"] }
+redis = { version = "0.23", features = ["tokio-comp", "connection-manager"] }
 
 # ID generation
 nanoid = "0.4"
 
-# URL validation
-url = "2"
+# URL validation - use older version compatible with Rust 1.85
+url = "=2.3.1"
 
 # Metrics
 prometheus = "0.13"
@@ -35,7 +35,7 @@ tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
 
 # Configuration
-config = "0.14"
+config = "0.13"
 dotenv = "0.15"
 
 # Error handling
@@ -46,4 +46,4 @@ anyhow = "1"
 chrono = { version = "0.4", features = ["serde"] }
 
 [dev-dependencies]
-reqwest = { version = "0.12", features = ["json"] }
+reqwest = { version = "0.11", features = ["json"] }
