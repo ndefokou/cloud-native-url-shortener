@@ -44,6 +44,15 @@ API: http://localhost:8080 (or via nginx at http://localhost:80)
 Prometheus: http://localhost:9090
 Grafana: http://localhost:3000
 
+## S1-06 — Test on a pull request
+
+Open a PR targeting `main` or `develop`. The **CD — Publish to Docker Hub** workflow will:
+
+- Build the Docker image (validates Dockerfile + secrets for username)
+- **Not** push to Docker Hub (avoids polluting `latest` from unmerged code)
+
+After merge to `main`, the same workflow pushes to Docker Hub.
+
 ## S1-06 — Image tags on Docker Hub
 
 After a merge to `main`, the publish workflow pushes:
