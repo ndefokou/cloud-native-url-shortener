@@ -1,3 +1,4 @@
+use crate::error::AppError;
 use lazy_static::lazy_static;
 use prometheus::{
     register_counter, register_counter_vec, register_histogram, Counter, CounterVec, Histogram,
@@ -72,5 +73,3 @@ impl Metrics {
         String::from_utf8(buffer).map_err(|e| AppError::Internal(format!("Invalid UTF-8: {}", e)))
     }
 }
-
-use crate::error::AppError;

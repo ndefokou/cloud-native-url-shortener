@@ -1,14 +1,11 @@
 name: CI/CD Pipeline
 
+# Sprint 2+: GHCR, Trivy, K8s deploy. Sprint 1 uses ci.yml + docker-publish.yml.
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
-      - develop
-  pull_request:
-    branches:
-      - main
-      - develop
 
 env:
   REGISTRY: ghcr.io

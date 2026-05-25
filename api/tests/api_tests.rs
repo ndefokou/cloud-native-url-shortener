@@ -4,11 +4,7 @@ use axum::{
 };
 use serde_json::json;
 use tower::ServiceExt;
-use url_shortener::{
-    build_state,
-    config::AppConfig,
-    create_router,
-};
+use url_shortener::{build_state, config::AppConfig, create_router};
 
 fn test_config() -> AppConfig {
     AppConfig {
@@ -16,8 +12,7 @@ fn test_config() -> AppConfig {
         port: 8080,
         redis_url: std::env::var("REDIS_URL")
             .unwrap_or_else(|_| "redis://127.0.0.1:6379".to_string()),
-        base_url: std::env::var("BASE_URL")
-            .unwrap_or_else(|_| "http://localhost:8080".to_string()),
+        base_url: std::env::var("BASE_URL").unwrap_or_else(|_| "http://localhost:8080".to_string()),
         url_ttl: None,
     }
 }
