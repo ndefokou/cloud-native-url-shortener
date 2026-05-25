@@ -28,8 +28,8 @@ First presentation sprint: version control, containers, and automated image publ
 
 In **Settings → Secrets and variables → Actions**, add:
 
-- `DOCKERHUB_USERNAME` — your Docker Hub username
-- `DOCKERHUB_TOKEN` — access token (not your account password)
+- `DOCKERHUB_USERNAME` — Docker Hub username (e.g. `mbunwevicki100`), not your GitHub name
+- `DOCKERHUB_TOKEN` — access token with **Read, Write, Delete** (Read-only cannot push)
 
 Create a repository on Docker Hub named `url-shortener` (or set `IMAGE_NAME` in the publish workflow).
 

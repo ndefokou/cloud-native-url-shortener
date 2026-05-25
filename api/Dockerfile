@@ -12,17 +12,18 @@ WORKDIR /app
 # Copy manifests first for better caching
 COPY Cargo.toml Cargo.lock* ./
 
-# Create dummy main.rs to build dependencies
+# Dummy sources for dependency layer (package has both lib + bin)
 RUN mkdir src && \
     echo "fn main() {}" > src/main.rs && \
+    echo "pub fn _dummy() {}" > src/lib.rs && \
     cargo build --release && \
     rm -rf src
 
 # Copy actual source code
 COPY src ./src
 
-# Build the application
-RUN touch src/main.rs && \
+# Rebuild with real sources
+RUN touch src/main.rs src/lib.rs && \
     cargo build --release
 
 # ===========================================
