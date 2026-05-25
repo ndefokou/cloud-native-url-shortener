@@ -19,9 +19,7 @@ impl AppConfig {
                 .unwrap_or(8080),
             redis_url: env::var("REDIS_URL").unwrap_or_else(|_| "redis://redis:6379".to_string()),
             base_url: env::var("BASE_URL").unwrap_or_else(|_| "http://localhost:8080".to_string()),
-            url_ttl: env::var("URL_TTL")
-                .ok()
-                .and_then(|v| v.parse().ok()),
+            url_ttl: env::var("URL_TTL").ok().and_then(|v| v.parse().ok()),
         })
     }
 }

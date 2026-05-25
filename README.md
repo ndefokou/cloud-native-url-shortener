@@ -37,7 +37,7 @@ A production-style cloud-native URL shortener demonstrating containerization, in
 | Database           | Redis              |
 | Reverse Proxy      | Nginx              |
 | Containers         | Docker             |
-| Container Registry | GHCR               |
+| Container Registry | Docker Hub (Sprint 1), GHCR (later) |
 | CI/CD              | GitHub Actions     |
 | IaC                | Terraform          |
 | Orchestration      | Kubernetes         |
@@ -79,7 +79,11 @@ cloud-native-url-shortener/
 │   └── loki/
 ├── .github/                # CI/CD workflows
 │   └── workflows/
-│       └── ci-cd.yml
+│       ├── ci.yml              # Lint & test (every push)
+│       ├── docker-publish.yml  # Push image to Docker Hub (main)
+│       └── ci-cd-full.yml      # K8s deploy + GHCR (later sprints)
+├── docs/
+│   └── SPRINT-1.md         # Sprint 1 task guide
 ├── scripts/                # Utility scripts
 ├── docker-compose.yml      # Local development
 └── README.md
@@ -159,15 +163,18 @@ Access the monitoring dashboards:
 - Resource limits
 - Rate limiting
 
-## 📈 CI/CD Pipeline
+## 📈 CI/CD Pipeline (Sprint 1)
 
-The GitHub Actions workflow includes:
-1. Linting (cargo fmt, clippy)
-2. Testing (cargo test)
-3. Docker build
-4. Security scanning (Trivy)
-5. Image push to GHCR
-6. Kubernetes deployment
+See [docs/SPRINT-1.md](docs/SPRINT-1.md) for the full task breakdown.
+
+| Workflow | Trigger | What it does |
+| -------- | ------- | ------------ |
+| `ci.yml` | Every push / PR | `cargo fmt`, clippy, unit tests |
+| `docker-publish.yml` | Push to `main` | Build image, tag with Git SHA, push to Docker Hub |
+
+**Required GitHub secrets:** `DOCKERHUB_USERNAME`, `DOCKERHUB_TOKEN`
+
+Later sprints use `ci-cd-full.yml` (Trivy, GHCR, Kubernetes deploy).
 
 ## 📝 License
 

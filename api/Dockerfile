@@ -31,7 +31,7 @@ RUN touch src/main.rs && \
 FROM alpine:3.19 AS runtime
 
 # Install runtime dependencies
-RUN apk add --no-cache ca-certificates tzdata && \
+RUN apk add --no-cache ca-certificates tzdata wget && \
     # Create non-root user for security
     addgroup -g 1000 appgroup && \
     adduser -u 1000 -G appgroup -D appuser
